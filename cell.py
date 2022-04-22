@@ -1,10 +1,11 @@
-from tkinter import Button
+from tkinter import Button, Label
 
 import random
 import settings
 
 class Cell:
     all = []
+    cell_count_label_object = None
     def __init__(self, x, y, is_mine=False):
         self.is_mine = is_mine
         self.cell_btn_object = None
@@ -24,6 +25,20 @@ class Cell:
         btn.bind("<Button-2>", self.middle_click_actions)
         btn.bind("<Button-3>", self.right_click_actions)
         self.cell_btn_object = btn
+
+    # static method is used when something needs to be accessed/called only once and not everytime when instantiated
+    # static method is just for use case of the class and not fo the use case of the instance
+    # We need not to pass self if we don't use an instance method
+    @staticmethod
+    def create_cell_count_label(location):
+        lbl = Label(
+            location,
+            bg="black",
+            fg="white",
+            font=("", 30),
+            text=f"Cells Left:{settings.CELL_COUNT}"
+        )
+        Cell.cell_count_label_object = lbl
 
     def left_click_actions(self, event):
         if self.is_mine:
