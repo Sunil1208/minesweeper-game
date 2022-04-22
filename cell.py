@@ -5,10 +5,12 @@ import settings
 
 class Cell:
     all = []
+    cell_count = settings.CELL_COUNT
     cell_count_label_object = None
     def __init__(self, x, y, is_mine=False):
         self.is_mine = is_mine
         self.cell_btn_object = None
+        self.is_opened = False
         self.x = x
         self.y = y
 
@@ -36,7 +38,7 @@ class Cell:
             bg="black",
             fg="white",
             font=("", 30),
-            text=f"Cells Left:{settings.CELL_COUNT}"
+            text=f"Cells Left:{Cell.cell_count}"
         )
         Cell.cell_count_label_object = lbl
 
@@ -55,7 +57,16 @@ class Cell:
         self.cell_btn_object.configure(bg="black", text='BOOM')
 
     def show_cell(self):
-        self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
+        if not self.is_opened:
+            Cell.cell_count -= 1
+            self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
+            # Replace the text of the cell count label with the newer count
+            if Cell.cell_count_label_object:
+                Cell.cell_count_label_object.configure(
+                    text=f"Cells Left:{Cell.cell_count}"
+                )
+        # Mark the cell as opened (Use it as the last line of this method)
+        self.is_opened = True
     
     #read only property
     @property
