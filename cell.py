@@ -29,6 +29,10 @@ class Cell:
         if self.is_mine:
             self.show_mine()
         else:
+            # if there are no mines around, show/open all the cell and display the numbers
+            if self.surrounded_cells_mines_length == 0:
+                for cell_obj in self.surrounded_cells:
+                    cell_obj.show_cell()
             self.show_cell()
 
     def show_mine(self):
