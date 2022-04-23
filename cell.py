@@ -53,6 +53,9 @@ class Cell:
                 for cell_obj in self.surrounded_cells:
                     cell_obj.show_cell()
             self.show_cell()
+            # If Mines cound is equal to the cells left count, player won
+            if Cell.cell_count == settings.MINES_COUNT:
+                messagebox.INFO("You won", "Game over")
         # Cancel left and right click event if cell is already opened:
         # self.cell_btn_object.unbind("<Button-1>")
         # self.cell_btn_object.unbind("<Button-2>")
