@@ -1,7 +1,8 @@
-from tkinter import Button, Label
+from tkinter import Button, Label, messagebox
 
 import random
 import settings
+import sys
 
 class Cell:
     all = []
@@ -11,6 +12,7 @@ class Cell:
         self.is_mine = is_mine
         self.cell_btn_object = None
         self.is_opened = False
+        self.is_mine_candidate = False
         self.x = x
         self.y = y
 
@@ -24,8 +26,8 @@ class Cell:
             height=4,
         )
         btn.bind("<Button-1>", self.left_click_actions)
-        btn.bind("<Button-2>", self.middle_click_actions)
-        btn.bind("<Button-3>", self.right_click_actions)
+        btn.bind("<Button-2>", self.right_click_actions)
+        btn.bind("<Button-3>", self.middle_click_actions)
         self.cell_btn_object = btn
 
     # static method is used when something needs to be accessed/called only once and not everytime when instantiated
@@ -51,10 +53,16 @@ class Cell:
                 for cell_obj in self.surrounded_cells:
                     cell_obj.show_cell()
             self.show_cell()
+        # Cancel left and right click event if cell is already opened:
+        # self.cell_btn_object.unbind("<Button-1>")
+        # self.cell_btn_object.unbind("<Button-2>")
 
     def show_mine(self):
         # A logic to interrupt the game and display a message that player lost!
-        self.cell_btn_object.configure(bg="black", text='BOOM')
+        self.cell_btn_object.configure(bg="red", text='BOOM')
+        # ctypes.windll.user32.MessageBoxW(0, 'You clicked on a mine', 'Game Over', 0)
+        messagebox.showinfo("You clicked on a mine", "Game Over")
+        sys.exit()
 
     def show_cell(self):
         if not self.is_opened:
@@ -65,6 +73,10 @@ class Cell:
                 Cell.cell_count_label_object.configure(
                     text=f"Cells Left:{Cell.cell_count}"
                 )
+            # If this was a mine candidate, then for safety we should
+            # configure the background color to StystemButtonFace
+            if self.is_mine_candidate:
+                self.cell_btn_object.configure(bg="SystemButtonFace", text="")
         # Mark the cell as opened (Use it as the last line of this method)
         self.is_opened = True
     
@@ -101,8 +113,12 @@ class Cell:
                 return cell
     
     def right_click_actions(self, event):
-        print("right click event is ", event)
-        print("I am right clicked")
+        if not self.is_mine_candidate:
+            self.cell_btn_object.configure(bg="orange", text="MC")
+            self.is_mine_candidate = True
+        else:
+            self.cell_btn_object.configure(bg="SystemButtonFace", text="")
+            self.is_mine_candidate = False
     
     def middle_click_actions(self, event):
         print("middle click ", event)
